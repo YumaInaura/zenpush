@@ -11,6 +11,8 @@ request_header = { 'Content-Type' => 'application/json', 'Authorization' => "Bea
 
 round = 0
 
+break_flag = false
+
 # ページングしながらQiitaの全記事を取得
 (1..100).each do |i|
   get_url = "https://qiita.com/api/v2/users/#{ENV['USER_ID']}/items?page=#{i}&per_page=100"
@@ -23,10 +25,19 @@ round = 0
 
   break if items.empty?
 
+  if break_flag
+    break
+  end
+
   items.each do |item|
     round += 1
 
-    if round >= 357
+    if break_flag
+      break
+    end
+
+    if item['title'].match /テストリスナーポートの使い方は/
+      break_flag = true
       break
     end
 
