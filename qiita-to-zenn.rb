@@ -39,11 +39,11 @@ round = 0
     # 2023-08-25T21:01:00+09:00
 
     # 複数回実行しても記事が重複しないようにQiitaの記事作成日時をslugとして利用する
-    slug = item['created_at'].gsub(':', '_').gsub('+', '-').gsub('T', 't') + '_'
+    slug = item['created_at'].gsub(':', '_').gsub('+', '-').gsub('T', 't')
 
     original_created_at_date = item['created_at'].gsub(/T.+/, '')
 
-    filepath = "../../zennn/articles/qiita-#{slug}.md"
+    filepath = "./articles/qiita-#{slug}.md"
 
     future_publish_at ||= Time.now
     future_publish_at += 60 * 60
