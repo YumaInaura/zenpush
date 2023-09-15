@@ -12,6 +12,7 @@ request_header = { 'Content-Type' => 'application/json', 'Authorization' => "Bea
 round = 0
 
 break_flag = false
+future_publish_at = nil
 
 # ページングしながらQiitaの全記事を取得
 (1..100).each do |i|
@@ -58,6 +59,9 @@ break_flag = false
 
     future_publish_at ||= Time.now
     future_publish_at += 60 * 60
+
+    puts 'future_publish_at'
+    puts future_publish_at
 
     puts filepath
 
