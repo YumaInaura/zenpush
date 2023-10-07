@@ -10,6 +10,7 @@ http.use_ssl = true
 request_header = { 'Content-Type' => 'application/json', 'Authorization' => "Bearer #{ENV.fetch('QIITA_TOKEN', nil)}" }
 
 round = 0
+break_flag = false
 
 # ページングしながらQiitaの全記事を取得
 (1..100).each do |i|
@@ -22,11 +23,13 @@ round = 0
   items = JSON.parse(get_response.response.body)
 
   break if items.empty?
+  break if break_flag
 
   items.each do |item|
     round += 1
 
-    if round >= 357
+    if item['title'].match?(/複数のリバートコミットを作ってPRを作成する方法のメモ/) || break_flag
+      break_flag = true
       break
     end
 
