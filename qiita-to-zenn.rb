@@ -7,16 +7,13 @@ uri = URI.parse('https://qiita.com/')
 http = Net::HTTP.new(uri.host, uri.port)
 http.use_ssl = true
 
-request_header = { 'Content-Type' => 'application/json', 'Authorization' => "Bearer #{ENV['QIITA_TOKEN']}" }
+request_header = { 'Content-Type' => 'application/json', 'Authorization' => "Bearer #{ENV.fetch('QIITA_TOKEN', nil)}" }
 
 round = 0
 
-break_flag = false
-future_publish_at = nil
-
 # ページングしながらQiitaの全記事を取得
 (1..100).each do |i|
-  get_url = "https://qiita.com/api/v2/users/#{ENV['USER_ID']}/items?page=#{i}&per_page=100"
+  get_url = "https://qiita.com/api/v2/users/#{ENV.fetch('USER_ID', nil)}/items?page=#{i}&per_page=100"
 
   get_request = Net::HTTP::Get.new(get_url, request_header)
 
@@ -26,19 +23,10 @@ future_publish_at = nil
 
   break if items.empty?
 
-  if break_flag
-    break
-  end
-
   items.each do |item|
     round += 1
 
-    if break_flag
-      break
-    end
-
-    if item['title'].match /テストリスナーポートの使い方は/
-      break_flag = true
+    if round >= 357
       break
     end
 
@@ -51,7 +39,7 @@ future_publish_at = nil
     # 2023-08-25T21:01:00+09:00
 
     # 複数回実行しても記事が重複しないようにQiitaの記事作成日時をslugとして利用する
-    slug = item['created_at'].gsub(':', '_').gsub('+', '-').gsub('T', 't')
+    slug = item['created_at'].tr(':', '_').tr('+', '-').tr('T', 't')
 
     original_created_at_date = item['created_at'].gsub(/T.+/, '')
 
@@ -60,16 +48,13 @@ future_publish_at = nil
     future_publish_at ||= Time.now
     future_publish_at += 60 * 60
 
-    puts 'future_publish_at'
-    puts future_publish_at
-
     puts filepath
 
     # Qiitaのタグをそのままzennで使う
-    tag_names = item['tags'].map { |tag| tag['name'] }
+    tag_names = item['tags'].map { |tag| tag['name'].downcase }
 
     # Qiitaでポエムタグがついている記事はideaに、そうでない記事はtechに分類する
-    type = if tag_names.include?('ポエム') || tag_names.include?('Qiita')
+    type = if tag_names.include?('ポエム') || tag_names.include?('qiita')
              'idea'
            else
              'tech'
