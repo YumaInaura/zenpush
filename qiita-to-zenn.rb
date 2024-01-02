@@ -48,6 +48,7 @@ break_flag = false
 
     filepath = "./articles/qiita-#{slug}.md"
 
+    # うまく加算できてない
     future_publish_at ||= Time.now
     future_publish_at += 60 * 60
 
