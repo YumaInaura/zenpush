@@ -28,7 +28,7 @@ break_flag = false
   items.each do |item|
     round += 1
 
-    if item['title'].match?(/複数のリバートコミットを作ってPRを作成する方法のメモ/) || break_flag
+    if item['title'].match?(/Github コミットハッシュが分から/) || break_flag
       break_flag = true
       break
     end
